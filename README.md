@@ -23,7 +23,7 @@ pub fn main() -> Nil {
 }
 ```
 
-By default, stores can be read from and written to from other processes:
+By default, stores can be read from and written to by other processes:
 
 ```gleam
 import kvstore
