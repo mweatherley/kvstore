@@ -1,17 +1,24 @@
+import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option}
+import kvstore/config.{type Config, Config, Private, Protected}
 
+/// A type-safe key-value store. 
 pub type KVStore(key, value)
 
 pub fn new() -> KVStore(key, value) {
-  create_table(Public)
+  new_with_config(config.default())
 }
 
 pub fn new_protected() -> KVStore(key, value) {
-  create_table(Protected)
+  new_with_config(Config(..config.default(), access: Protected))
 }
 
 pub fn new_private() -> KVStore(key, value) {
-  create_table(Private)
+  new_with_config(Config(..config.default(), access: Private))
+}
+
+pub fn new_with_config(config: Config) {
+  create_table(config.into_options(config))
 }
 
 @external(erlang, "kvstore_ffi", "kvstore_get")
@@ -29,6 +36,9 @@ pub fn insert_new(table: KVStore(k, v), key: k, value: v) -> Result(Bool, Nil)
 @external(erlang, "kvstore_ffi", "kvstore_delete")
 pub fn delete(table: KVStore(k, v), key: k) -> Result(Nil, Nil)
 
+@external(erlang, "kvstore_ffi", "kvstore_clear")
+pub fn clear(table: KVStore(k, v)) -> Result(Nil, Nil)
+
 @external(erlang, "kvstore_ffi", "kvstore_drop")
 pub fn drop(table: KVStore(k, v)) -> Result(Nil, Nil)
 
@@ -36,16 +46,5 @@ pub fn drop(table: KVStore(k, v)) -> Result(Nil, Nil)
 // Helpers
 // -------
 
-type Access {
-  // Read and write access for other processes.
-  Public
-
-  // Read-only access for other processes.
-  Protected
-
-  // No access for other processes.
-  Private
-}
-
 @external(erlang, "kvstore_ffi", "kvstore_new")
-fn create_table(access: Access) -> KVStore(key, value)
+fn create_table(options: List(Dynamic)) -> KVStore(key, value)
