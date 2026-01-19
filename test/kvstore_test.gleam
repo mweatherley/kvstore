@@ -68,3 +68,17 @@ pub fn private_test() {
   })
   assert process.receive_forever(subj) |> result.is_error
 }
+
+pub fn handshake_test() {
+  let store = kvstore.new()
+  let _ = kvstore.insert(store, 0, "foo")
+
+  let subj = process.new_subject()
+  process.spawn(fn() {
+    let _ = kvstore.insert(store, 1, "bar")
+    let assert Ok(Some(value)) = kvstore.get(store, 0)
+    process.send(subj, value)
+  })
+  let assert Ok("foo") = process.receive(subj, 100)
+  assert kvstore.get(store, 1) == Ok(Some("bar"))
+}
