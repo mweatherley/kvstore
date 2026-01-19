@@ -1,7 +1,7 @@
 import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option}
-import internal/convert
 import kvstore/config.{type Config, Config, Private, Protected}
+import kvstore/internal/convert
 
 /// A table storing at most one value for each key, backed by an ETS "set" table.
 ///
