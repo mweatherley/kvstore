@@ -5,9 +5,9 @@ import kvstore/config
 /// Create the 
 fn write_concurrency_option(conc: config.WriteConcurrency) -> Dynamic {
   let conc_setting = case conc {
-    config.SimultaneousWrites -> dynamic.bool(True)
+    config.ParallelWrites -> dynamic.bool(True)
     config.SerializedWrites -> dynamic.bool(False)
-    config.Automatic -> dynamic_atom("auto")
+    config.AutomaticWrites -> dynamic_atom("auto")
   }
 
   dynamic.array([
@@ -18,8 +18,8 @@ fn write_concurrency_option(conc: config.WriteConcurrency) -> Dynamic {
 
 fn read_concurrency_option(conc: config.ReadConcurrency) -> Dynamic {
   let conc_setting = case conc {
-    config.Optimized -> dynamic.bool(True)
-    config.Default -> dynamic.bool(False)
+    config.OptimizedReads -> dynamic.bool(True)
+    config.DefaultReads -> dynamic.bool(False)
   }
 
   dynamic.array([dynamic_atom("read_concurrency"), conc_setting])
