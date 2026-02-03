@@ -2,7 +2,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/erlang/atom
 import kvstore/config
 
-/// Create the 
+/// Create the write concurrency option for ETS configuration.
 fn write_concurrency_option(conc: config.WriteConcurrency) -> Dynamic {
   let conc_setting = case conc {
     config.ParallelWrites -> dynamic.bool(True)
@@ -16,6 +16,7 @@ fn write_concurrency_option(conc: config.WriteConcurrency) -> Dynamic {
   ])
 }
 
+/// Create the read concurrency option for ETS configuration.
 fn read_concurrency_option(conc: config.ReadConcurrency) -> Dynamic {
   let conc_setting = case conc {
     config.OptimizedReads -> dynamic.bool(True)
